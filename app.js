@@ -14,13 +14,14 @@ var oauth = new OAuth(
     process.env.TWIT_KEY,
     process.env.TWIT_SECRET,
     '1.0',
-    'http://127.0.0.1:3000/auth/twitter/callback',
+    'http://twitter-stalker.herokuapp.com/auth/twitter/callback',
     'HMAC-SHA1'
 );
+var port = process.env.PORT || 3000;
 var T;
 
 
-mongoose.connect(process.env.MONGO || 'mongodb://localhost/twitter-tracker');
+mongoose.connect(process.env.MONGO_URI || 'mongodb://localhost/twitter-tracker');
 mongoose.connection.once('open', function() {
     console.log('DB connection open');
 });
@@ -99,7 +100,6 @@ server.get('/user', function(req,res) {
 
     if (screen_name) {
         T.get('users/show', { screen_name: screen_name }, function(err, twitterData, response) {
-            console.log( typeof twitterData.followers_count);
             var newFollower = { amount: twitterData.followers_count };
 
             User.findOneAndUpdate({ screen_name: screen_name }, { $push: { followers: newFollower } }, { upsert: true }, function(err, updatedDoc) {
@@ -113,4 +113,6 @@ server.get('/user', function(req,res) {
 });
 
 
-server.listen(3000);
+server.listen(port, function() {
+    console.log('Listening on ' + port);
+});
