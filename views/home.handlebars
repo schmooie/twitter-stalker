@@ -1,0 +1,64 @@
+{{#if error}}
+    <div class="alert alert-danger" role="alert">
+      <span class="glyphicon glyphicon-exclamation-sign" aria-hidden="true"></span>
+      <span class="sr-only">Error:</span>
+      {{error}}
+    </div>
+{{/if}}
+
+{{#if oauth}}
+    <div ng-app="TwitterTracker" ng-controller="MainCtrl">
+        <div class="row">
+            <div class="col-md-8 col-md-offset-2">
+                <div class="col-md-7">
+                    <h1>Twitter Followers Tracker</h1>
+                </div>
+                <div class="col-md-5 pull-right search-bar">
+                    <form ng-submit="findFollowers(screenName)">
+                        <div class="input-group">
+                            <input type="text" class="form-control" placeholder="Search for..." ng-model="screenName">
+                            <span class="input-group-btn">
+                                <input class="btn btn-primary" type="submit" id="submit" value="Go!"/>
+                            </span>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+        <div class="row data" ng-show="data" ng-cloak>
+            <div class="col-md-8 col-md-offset-2">
+                <div class="col-md-5">
+                    <div class="panel panel-default">
+                        <div class="panel-heading">{$ data.screen_name $}</div>
+                        <table class="table">
+                            <thead>
+                                <tr>
+                                    <td>#</td>
+                                    <td>Time</td>
+                                    <td>Followers</td>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr ng-repeat="follows in data.followers">
+                                    <td>{$ $index + 1 $}</td>
+                                    <td>{$ follows.date | amDateFormat:'MM/DD - h:mmA' $}</td>
+                                    <td>{$ follows.amount $}</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                <div class="col-md-7" ng-show="chartConfig">
+                    <highchart id="chart1" config="chartConfig"></highchart>
+                </div>
+            </div>
+        </div>
+    </div>
+{{else}}
+    <div class="col-md-12">
+            <h1 class="text-center">Twitter Followers Tracker</h1>
+    </div>
+    <div class="col-md-12 text-center">
+        <a href="/auth/twitter" class="btn btn-primary">Authenticate</a>
+    </div>
+{{/if}}
